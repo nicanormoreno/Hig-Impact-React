@@ -1,0 +1,4 @@
+export const CHANGE_APP_PROPS = 'CHANGE_APP_PROPS';
+export const ACTION_LOGIN = 'ACTION_LOGIN';
+export const ACTION_LOGOUT = 'ACTION_LOGOUT';
+export const ACTION_ATM = 'ACTION_ATM';

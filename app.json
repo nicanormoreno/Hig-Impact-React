@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "HingtImapct",
+    "slug": "HingtImapct",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "android": {
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDiq2XmQOj2wQ-pB077ECrWnjdihf5ZdFo"
+        }
+      }
+    },
+    "ios": {
+      "supportsTablet": true,
+      "package": "com.highimpact",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDiq2XmQOj2wQ-pB077ECrWnjdihf5ZdFo"
+        }
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
