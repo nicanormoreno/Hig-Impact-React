@@ -1,4 +1,4 @@
-import { CHANGE_APP_PROPS, ACTION_LOGIN } from '../actions/ActionTypes';
+import { CHANGE_APP_PROPS, ACTION_LOGIN, ACTION_LOADING } from '../actions/ActionTypes';
 
 const initialState = {
   loading: false,
@@ -10,6 +10,7 @@ const initialState = {
   screen: { action: 'home', index: 1 },
   session_token: null,
   username: '',
+  loading:false,
 };
 
 export default function atmsReducer(state = initialState, action) {
@@ -18,6 +19,8 @@ export default function atmsReducer(state = initialState, action) {
     //   return { ...state, ...action.props };
       case ACTION_LOGIN:
         return Object.assign({}, state, action.props);
+      case ACTION_LOADING:
+        return   Object.assign({}, state, action.props);
     //   case SUCCESS_LOGIN:
     //     return Object.assign({}, state, { loading: false });
     default:

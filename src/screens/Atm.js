@@ -53,7 +53,6 @@ class Atm extends Component {
 
     closeModal(password){
         if(password){
-            console.log(password)
             this.props.actionLogin(this.props.username, password, this.authCallback)
         }
         this.setState({showModal:false});

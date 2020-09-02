@@ -1,12 +1,12 @@
-import { ACTION_LOGIN, ACTION_LOGOUT } from './ActionTypes';
+import { ACTION_LOADING,ACTION_LOGIN } from './ActionTypes';
 import AuthService from '../providers/AuthService';
 import {Actions} from 'react-native-router-flux'
 
 export const actionLogin = (username, password, callback) => {
-    return disaptch =>{
+    return dispatch =>{
          AuthService.loginService(username, password)
         .then(token => {
-            disaptch({
+            dispatch({
                 type: ACTION_LOGIN,
                 props:{
                     session_token: token,
@@ -16,6 +16,15 @@ export const actionLogin = (username, password, callback) => {
             callback(token);
         }).catch(error => {
              callback && callback()
+        })
+    }
+}
+
+export const actionLoading = (loading) => {
+    return dispatch=>{
+        dispatch({
+            type: ACTION_LOADING,
+            props: {loading}
         })
     }
 }

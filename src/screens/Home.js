@@ -4,13 +4,16 @@ import CheckBox from 'react-native-check-box'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 import {Field, reduxForm} from 'redux-form'
+import HtmlToPdf from 'react-native-html-to-pdf'
 import * as Animatable from 'react-native-animatable';
 import {Icon} from 'native-base';
 import {actionGetAtms, actionAtmDetail, actionSearchAtms} from '../actions/AtmsActions'
+import {actionLoading} from '../actions/AppActions'
 import _ from 'lodash'
 import { Actions } from 'react-native-router-flux';
 import { BackHandler } from 'react-native';
 import L from '../common/Layout'
+import PdfModal from '../components/PdfModal'
 import NewInput from '../components/NewInput';
 
 const IMG_LOGO = require('../common/assets/aTm.jpg');
@@ -20,7 +23,8 @@ class Home extends Component {
     super(props);
     this.state={
       searchByCity:true,
-      searchByStreet:true,
+      postalcode_2000_3000:false,
+      showModal: false,
     }
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     this.submitForm = this.submitForm.bind(this)
@@ -34,6 +38,7 @@ class Home extends Component {
         this.props.actionGetAtms(this.props.session_token);
     }
     else{
+      this.props.actionLoading(true);
       setTimeout(()=>{
         Actions.login()
       }, 3000)
@@ -61,11 +66,49 @@ class Home extends Component {
       Actions.atm();
   }
 
+  // createPDF(){
+  //   let atms = []
+  //   this.props.atms_list.forEach(atm=>{
+  //     const {postalcode} = atm.address;
+  //     if(parseInt(postalcode) >= 2000 && parseInt(postalcode <= 3000) ){
+  //         atms.push({
+  //           city: atm.adress.city,
+  //           adress: `${atm.adress.street} ${atm.adress.housenumber}`,
+  //           postalcode: atm.address.postalcode
+  //         })
+  //       }
+  //     })
+  //   let html = <html>
+  //     {atms.map(atm=>{
+  //       return <div>
+  //         <div>
+  //           <a>City: </a>
+  //           <a>{atm.city}</a>
+  //         </div>
+  //         <div>
+  //           <a>Address: </a>
+  //           <a>{atm.adress}</a>
+  //         </div>
+  //         <div>
+  //           <a>Postal code: </a>
+  //           <a>{atm.postalcode}</a>
+  //         </div>
+  //       </div>
+  //     })}
+  //   </html>
+  //   let options={
+  //     html,
+  //     fileName: 'ATMs',
+  //     directory: 'Documents'
+  //   }
+  //   HtmlToPdf.convert(options).then(response=>{
+  //   })
+  // }
+
   submitForm(value){
     const {search} = value
     const {session_token} = this.props
     let filter = this.state.searchByCity ? 'city' : 'street'  
-    console.log(search)
     this.props.actionSearchAtms(search, filter, session_token);
   }
 
@@ -84,7 +127,7 @@ class Home extends Component {
         backgroundColor:'#C13112',
         borderRadius:L.h(12)
       }} >
-        <View style={{width:'70%'}}>
+        <View style={{width:'100%'}}>
           <View style={{flexDirection:'row'}}>
             <View style = {{width:'85%'}}>
                 <Field
@@ -101,7 +144,7 @@ class Home extends Component {
               <Icon name='search' style={{color:'#eeeeee'}}/>
             </TouchableOpacity>
           </View>
-          <View style={{flexDirection:'row', width:L.h(130), marginLeft:L.h(20), alignSelf:'flex-end', marginRight:L.h(40)}}>
+          <View style={{flexDirection:'row', width:L.h(270), marginLeft:L.h(20)}}>
             <Text>City:</Text>
             <CheckBox
               style={{flex:1}}
@@ -114,14 +157,24 @@ class Home extends Component {
               onClick={()=> this.setState({searchByCity:false})}
               isChecked={!this.state.searchByCity}
             />
+            <Text>Postal code filter:</Text>
+            <CheckBox
+              style={{flex: 1}}
+              onClick={()=> this.filterByPostalCode(!this.state.postalcode_2000_3000)}
+              isChecked={this.state.postalcode_2000_3000}
+            />
           </View>
         </View>
       </View>
     )
   }
 
+  filterByPostalCode(state){
+    this.setState({postalcode_2000_3000: state});
+  }
+
   atmCard(atm){
-    const {city, street, housenumber, geolocation} = atm.address
+    const {city, street, housenumber} = atm.address;
     return(
       <TouchableOpacity onPress = {() => this.props.actionAtmDetail(
         {
@@ -152,6 +205,18 @@ class Home extends Component {
     ) 
   }
 
+  renderAtmCard(atm){
+    const{postalcode} = atm.address 
+    const {postalcode_2000_3000} = this.state;
+    if(postalcode_2000_3000){
+      if(parseInt(postalcode) >= 2000 || parseInt(postalcode <= 3000) ){
+        return  this.atmCard(atm);
+      }
+    }else{
+      return this.atmCard(atm);
+    }
+  }
+
   render() {
     const {atms_list} = this.props
     return (
@@ -159,6 +224,15 @@ class Home extends Component {
         justifyContent:'center',
         backgroundColor:'#cccccc'}}>
         {this.atmSearch()}
+        <PdfModal 
+          isOpen={this.state.showModal}
+          pdf= {null}
+        />
+        <TouchableOpacity onPress= {()=>this.createPDF()}>
+          <Text style={{alignSelf:'center', marginTop:L.h(10), color:'#777777'}}>
+            {this.state.postalcode_2000_3000?'Atms whit postal code between 2000 and 3000':null}
+          </Text>
+        </TouchableOpacity>
         <ScrollView style={{width:"100%", marginTop:L.h(25)}} overflow="hidden">
         {
           !_.isEmpty(atms_list)
@@ -166,7 +240,7 @@ class Home extends Component {
               containerContentStyle={styles.container}
               data={atms_list}
               renderItem={({ item }) => (
-                this.atmCard(item)
+                this.renderAtmCard(item)
               )}
               keyExtractor={item => item.alpha2code}
               // Performance settings
@@ -245,7 +319,8 @@ const mapDispatchToProps = (dispatch) => {
 		{
       actionGetAtms,
       actionAtmDetail,
-      actionSearchAtms
+      actionSearchAtms,
+      actionLoading
 		},
 		dispatch
 	);

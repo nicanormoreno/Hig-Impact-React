@@ -1,8 +1,12 @@
-import {ACTION_ATM} from './ActionTypes';
+import {ACTION_ATM, ACTION_LOADING} from './ActionTypes';
 import AtmsService from '../providers/AtmsService';
 
 export const actionGetAtms = (sesstion_token) => {
     return dispatch => {
+        dispatch({
+            type:ACTION_LOADING,
+            props:{ loading:true}
+        })
         AtmsService.getAtms(sesstion_token).then( collection =>{
             let atms =[]
             collection.map((atm, index)=>{
@@ -13,12 +17,15 @@ export const actionGetAtms = (sesstion_token) => {
                 type:ACTION_ATM,
                 props:{atms_list: atms }
             })
+            dispatch({
+                type:ACTION_LOADING,
+                props:{ loading:false}
+            })
         })
     }
 }
 
 export const actionAtmDetail = (atm, callback) => {
-    console.log('atm detail', atm)
     return dispatch => {
         dispatch({
             type: ACTION_ATM,
@@ -29,7 +36,6 @@ export const actionAtmDetail = (atm, callback) => {
 }
 
 export const actionEditAtm = (atm, atms_list, callback) => {
-    console.log('atm edit', atm)
     return dispatch => {
         dispatch({
             type: ACTION_ATM,
@@ -39,6 +45,10 @@ export const actionEditAtm = (atm, atms_list, callback) => {
 
 export const actionSearchAtms = (search, filter, session_token) =>{
     return dispatch => {
+        dispatch({
+            type:ACTION_LOADING,
+            props:{ loading:true}
+        })
         AtmsService.searchAtm(search, filter, session_token)
             .then(collection => {
                 let atms = []
@@ -46,13 +56,16 @@ export const actionSearchAtms = (search, filter, session_token) =>{
                     atm.index = index;
                     atms.push(atm);
                 })
-                console.log(atms)
             dispatch({
                 type:ACTION_ATM,
                 props:{
                     atms_list: atms
                 }
             });
+            dispatch({
+                type:ACTION_LOADING,
+                props:{ loading:false}
+            })
         })
     }
 }

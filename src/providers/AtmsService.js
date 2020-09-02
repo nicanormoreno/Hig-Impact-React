@@ -31,7 +31,6 @@ export default class AtmsService {
   }
 
   static searchAtm(search, filter, session_token){
-    console.log('search serv', session_token)
     headers.set('Authorization', session_token);
     return new Promise(async (resolve, reject)=>{
       try{
@@ -40,10 +39,8 @@ export default class AtmsService {
           headers
         });
         if(response.status === 500){
-          console.log('no', response)
           reject(response.json());
         }else{
-          console.log('yes', response)
           response.json().then(data => {
             resolve(data)
           })

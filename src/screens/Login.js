@@ -9,7 +9,7 @@ import { Field, reduxForm } from 'redux-form';
 import NewInput from '../components/NewInput';
 import { required } from '../common/Validations';
 import L from '../common/Layout';
-import {actionLogin} from '../actions'
+import {actionLogin, actionLoading } from '../actions'
 import { Actions } from 'react-native-router-flux';
 
 
@@ -31,13 +31,15 @@ class Login extends Component {
     this.submitForm = this.submitForm.bind(this);
     this.loginCallback = this.loginCallback.bind(this);
   }
+
+  componentDidMount(){
+    this.props.actionLoading(false);
+  }
   submitForm(value) {
-    console.log('yes')
     this.props.actionLogin(value.username, value.password, this.loginCallback);
   }
 
   loginCallback(token){
-    console.log('callback');
     AsyncStorage.setItem('session_token', token)
     .then( () => {
       Actions.home();
@@ -134,6 +136,7 @@ const mapDispatchToProps = (dispatch) => {
 	return bindActionCreators(
 		{
       actionLogin,
+      actionLoading
 		},
 		dispatch
 	);
