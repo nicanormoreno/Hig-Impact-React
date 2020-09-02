@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
 import {
-  View, Text, ScrollView, ImageBackground, StyleSheet, AsyncStorage, TouchableOpacity
+  View, 
+  Text, 
+  ScrollView, 
+  ImageBackground, 
+  StyleSheet, 
+  AsyncStorage, 
+  TouchableOpacity,
+  Alert
 } from 'react-native';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -40,11 +47,14 @@ class Login extends Component {
   }
 
   loginCallback(token){
-    AsyncStorage.setItem('session_token', token)
-    .then( () => {
-      Actions.home();
-    })
-    
+    if(token){
+      AsyncStorage.setItem('session_token', token)
+      .then( () => {
+        Actions.home();
+      })
+    }else{
+      Alert.alert('Error', 'Some Credential is Wrong')
+    }    
   }
 
   renderSplash() {

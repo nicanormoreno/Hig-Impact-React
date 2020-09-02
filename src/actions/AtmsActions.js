@@ -25,6 +25,15 @@ export const actionGetAtms = (sesstion_token) => {
     }
 }
 
+export const actionEditAtm = (atm, atms_list, callback) => {
+    return dispatch => {
+        callback && callback();
+        // AtmsService.editAtm(atm, atms_list).then( collection =>{
+        //     callback && callback();
+        // })
+    }
+}
+
 export const actionAtmDetail = (atm, callback) => {
     return dispatch => {
         dispatch({
@@ -32,14 +41,6 @@ export const actionAtmDetail = (atm, callback) => {
             props: { atm_selected: atm }
         });
         callback && callback();
-    }
-}
-
-export const actionEditAtm = (atm, atms_list, callback) => {
-    return dispatch => {
-        dispatch({
-            type: ACTION_ATM,
-        })
     }
 }
 

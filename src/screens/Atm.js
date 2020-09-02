@@ -12,7 +12,7 @@ import {required, typeInteger, typeIntegerOrDecimal} from '../common/Validations
 import VTModal from '../components/VTModal'
 import NewInput from '../components/NewInput'
 import L from '../common/Layout'
-import {actionLogin, actionEditAtm} from '../actions/AppActions'
+import {actionLogin, actionEditAtm} from '../actions'
 
 class Atm extends Component {
     constructor(props){
@@ -23,6 +23,7 @@ class Atm extends Component {
             showModal:false
         }
         this.authCallback = this.authCallback.bind(this);
+        this.submitCallback = this.submitCallback(this);
         this.submitForm = this.submitForm.bind(this);
     }
 
@@ -44,16 +45,27 @@ class Atm extends Component {
     };
 
     submitForm(values){
-        console.log(values);
         const {atms_list} =this.props;
-        // this.setState({edit:true})
-        // Alert.alert(
-        // )
+        this.props.actionEditAtm(values, this.props.atms_list, this.submitCallback)
+        Alert.alert(
+          'ATM Edited',
+          'The ATM was Edited successfully',
+          [
+            {
+              text:'ok',
+              onPress: ()=>Actions.pop()
+            }
+          ]
+          )
+    }
+
+    submitCallback(){
     }
 
     closeModal(password){
         if(password){
-            this.props.actionLogin(this.props.username, password, this.authCallback)
+            this.props.actionLogin('admin', password, this.authCallback)
+            // this.props.actionLogin(this.props.username, password, this.authCallback)
         }
         this.setState({showModal:false});
     }
@@ -64,8 +76,7 @@ class Atm extends Component {
         }else{
             Alert.alert(
                 'Error',
-                'Authorization failed'
-                ['ok']
+                'Authorization failed',
             )
         }
     }
@@ -87,7 +98,7 @@ class Atm extends Component {
                 callback={this.closeModal.bind(this)}
               />
             <View style={styles.header}>
-              <TouchableOpacity onPress={()=>Actions.pop()}>
+              <TouchableOpacity onPress={()=>Actions.home()}>
                 <Icon name= "arrow-back" style={styles.app_color}/>
               </TouchableOpacity>
               <TouchableOpacity 

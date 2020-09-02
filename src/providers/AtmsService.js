@@ -52,18 +52,22 @@ export default class AtmsService {
   }
 
   static editAtm(newAtm, atmList){
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve, reject)=>{
       try{
-        atmList.map(atm, index => {
+        console.log(atmList)
+        atmList.map((atm, index) => {
+          console.log('map')
           if(atm.index === newAtm.index){
-          atmList[index].addres.city = newAtm.city
-          atmList[index].addres.street = newAtm.street
-          atmList[index].addres.housenumber = newAtm.housenumber
-          atmList[index].addres.geLocation.lat = newAtm.lat
-          atmList[index].addres.geLocation.lng = newAtm.lng
+            console.log('fech')
+          atmList[index].address.city = newAtm.city
+          atmList[index].address.street = newAtm.street
+          atmList[index].address.housenumber = newAtm.housenumber
+          atmList[index].address.geLocation.lat = newAtm.lat
+          atmList[index].address.geLocation.lng = newAtm.lng
           }
         })
-        resolve(atmList);
+        let response = atmList
+        resolve(response);
       }catch(error){
         reject(error)
       }
